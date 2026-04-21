@@ -26,6 +26,7 @@ class GeminiClientPool(metaclass=Singleton):
                 client_id=c.id,
                 secure_1psid=c.secure_1psid,
                 secure_1psidts=c.secure_1psidts,
+                secure_1psidcc=getattr(c, "secure_1psidcc", None), # <-- ADD THIS LINE
                 proxy=c.proxy,
             )
             self._clients.append(client)
