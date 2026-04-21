@@ -6,9 +6,9 @@ from pathlib import Path
 import orjson as json
 from curl_cffi.requests import AsyncSession, Cookies
 
-from .logger import logger
 from ..constants import Endpoint, Headers
 from ..exceptions import AuthError
+from .logger import logger
 
 
 def _extract_cookie_value(cookies: Cookies, name: str) -> str | None:

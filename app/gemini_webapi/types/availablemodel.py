@@ -1,7 +1,7 @@
 import orjson as json
 from pydantic import BaseModel
 
-from ..constants import build_model_header, MODEL_HEADER_KEY, Model
+from ..constants import MODEL_HEADER_KEY, Model, build_model_header
 from ..utils import get_nested_value
 
 

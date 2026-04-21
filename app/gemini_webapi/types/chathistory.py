@@ -1,5 +1,4 @@
 from textwrap import shorten
-from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -22,7 +21,7 @@ class ChatTurn(BaseModel):
 
     role: str
     text: str
-    model_output: Optional[ModelOutput] = None
+    model_output: ModelOutput | None = None
 
     def __str__(self) -> str:
         return f"{self.role.upper()}: {shorten(self.text, width=100)}"
@@ -44,7 +43,7 @@ class ChatHistory(BaseModel):
     """
 
     cid: str
-    turns: List[ChatTurn]
+    turns: list[ChatTurn]
 
     def __str__(self) -> str:
         return f"ChatHistory(cid={self.cid!r})"

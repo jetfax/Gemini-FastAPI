@@ -33,6 +33,11 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+exclude = [
+    ".git",
+    ".venv",
+    "app/gemini_webapi",
+]
 
 [tool.ruff.lint]
 select = [

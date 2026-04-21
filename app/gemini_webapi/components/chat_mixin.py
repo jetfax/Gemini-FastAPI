@@ -2,10 +2,10 @@ import orjson as json
 
 from ..constants import GRPC
 from ..types import (
+    Candidate,
     ChatHistory,
     ChatInfo,
     ChatTurn,
-    Candidate,
     ModelOutput,
     RPCData,
 )

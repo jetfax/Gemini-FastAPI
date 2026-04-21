@@ -118,7 +118,7 @@ class GemMixin:
                             id=gem[0],
                             name=gem[1][0],
                             description=gem[1][1],
-                            prompt=gem[2] and gem[2][0] or None,
+                            prompt=(gem[2] and gem[2][0]) or None,
                             predefined=True,
                         ),
                     )
@@ -131,7 +131,7 @@ class GemMixin:
                             id=gem[0],
                             name=gem[1][0],
                             description=gem[1][1],
-                            prompt=gem[2] and gem[2][0] or None,
+                            prompt=(gem[2] and gem[2][0]) or None,
                             predefined=False,
                         ),
                     )

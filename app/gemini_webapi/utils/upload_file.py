@@ -7,8 +7,8 @@ from curl_cffi import CurlMime
 from curl_cffi.requests import AsyncSession
 from pydantic import ConfigDict, validate_call
 
-from .logger import logger
 from ..constants import Endpoint, Headers
+from .logger import logger
 
 
 def _generate_random_name(extension: str = ".txt") -> str:

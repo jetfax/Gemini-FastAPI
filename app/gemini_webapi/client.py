@@ -1,13 +1,15 @@
 import asyncio
+import builtins
 import codecs
 import io
 import random
-import time
 import secrets
+import time
 import uuid
 from asyncio import Task
+from collections.abc import AsyncGenerator
 from pathlib import Path
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, Optional
 
 import orjson as json
 from curl_cffi.requests import AsyncSession, Cookies, Response
@@ -15,19 +17,19 @@ from curl_cffi.requests.exceptions import ReadTimeout
 
 from .components import ChatMixin, GemMixin, ResearchMixin
 from .constants import (
+    ARTIFACTS_RE,
+    CARD_CONTENT_RE,
+    DEFAULT_METADATA,
+    GEM_FLAG_INDEX,
+    GRPC,
+    MODEL_HEADER_KEY,
+    STREAMING_FLAG_INDEX,
+    TEMPORARY_CHAT_FLAG_INDEX,
     AccountStatus,
     Endpoint,
     ErrorCode,
-    GRPC,
     Headers,
     Model,
-    TEMPORARY_CHAT_FLAG_INDEX,
-    STREAMING_FLAG_INDEX,
-    GEM_FLAG_INDEX,
-    CARD_CONTENT_RE,
-    ARTIFACTS_RE,
-    DEFAULT_METADATA,
-    MODEL_HEADER_KEY,
 )
 from .exceptions import (
     APIError,
@@ -58,13 +60,13 @@ from .utils import (
     get_access_token,
     get_delta_by_fp_len,
     get_nested_value,
+    logger,
     parse_file_name,
     parse_response_by_frame,
     rotate_1psidts,
     running,
     save_cookies,
     upload_file,
-    logger,
 )
 
 
@@ -94,31 +96,31 @@ class GeminiClient(ChatMixin, GemMixin, ResearchMixin):
     """
 
     __slots__ = [
-        "proxy",
-        "client",
+        "_cookies",
+        "_gems",  # From GemMixin
+        "_lock",
+        "_model_registry",
+        "_recent_chats",  # From ChatMixin
+        "_reqid",
+        "_running",
         "access_token",
-        "build_label",
-        "session_id",
-        "language",
-        "push_id",
         "account_status",
-        "timeout",
         "auto_close",
+        "auto_refresh",
+        "build_label",
+        "client",
         "close_delay",
         "close_task",
-        "auto_refresh",
+        "kwargs",
+        "language",
+        "proxy",
+        "push_id",
         "refresh_interval",
         "refresh_task",
-        "watchdog_timeout",
+        "session_id",
+        "timeout",
         "verbose",
-        "_running",
-        "_cookies",
-        "_reqid",
-        "_model_registry",
-        "_lock",
-        "_recent_chats",  # From ChatMixin
-        "_gems",  # From GemMixin
-        "kwargs",
+        "watchdog_timeout",
     ]
 
     def __init__(
@@ -669,7 +671,7 @@ class GeminiClient(ChatMixin, GemMixin, ResearchMixin):
         temporary: bool = False,
         deep_research: bool = False,
         **kwargs,
-    ) -> AsyncGenerator[ModelOutput, None]:
+    ) -> AsyncGenerator[ModelOutput]:
         """
         Generates contents with prompt in streaming mode.
 
@@ -776,7 +778,7 @@ class GeminiClient(ChatMixin, GemMixin, ResearchMixin):
         session_state: dict[str, Any] | None = None,
         deep_research: bool = False,
         **kwargs,
-    ) -> AsyncGenerator[ModelOutput, None]:
+    ) -> AsyncGenerator[ModelOutput]:
         """
         Internal method which actually sends content generation requests.
         """
@@ -928,7 +930,7 @@ class GeminiClient(ChatMixin, GemMixin, ResearchMixin):
 
                     async def _process_parts(
                         parts: list[Any],
-                    ) -> AsyncGenerator[ModelOutput, None]:
+                    ) -> AsyncGenerator[ModelOutput]:
                         nonlocal is_thinking, is_queueing, has_candidates, is_completed, is_final_chunk, cid, rid
                         for part in parts:
                             # Check for fatal error codes
@@ -1212,7 +1214,7 @@ class GeminiClient(ChatMixin, GemMixin, ResearchMixin):
                             )
                         except StopAsyncIteration:
                             break
-                        except asyncio.TimeoutError:
+                        except builtins.TimeoutError:
                             logger.debug(
                                 f"[Watchdog] Socket idle for {stall_threshold + 5}s. Refreshing connection..."
                             )
@@ -1702,10 +1704,10 @@ class ChatSession:
 
     __slots__ = [
         "__metadata",
+        "gem",
         "geminiclient",
         "last_output",
         "model",
-        "gem",
     ]
 
     def __init__(
@@ -1809,7 +1811,7 @@ class ChatSession:
         temporary: bool = False,
         deep_research: bool = False,
         **kwargs,
-    ) -> AsyncGenerator[ModelOutput, None]:
+    ) -> AsyncGenerator[ModelOutput]:
         """
         Generates contents with prompt in streaming mode within this chat session.
 

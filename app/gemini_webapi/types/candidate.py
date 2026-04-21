@@ -3,9 +3,9 @@ from textwrap import shorten
 
 from pydantic import BaseModel, field_validator
 
-from .image import Image, WebImage, GeneratedImage
-from .video import GeneratedVideo, GeneratedMedia
+from .image import GeneratedImage, Image, WebImage
 from .research import DeepResearchPlan
+from .video import GeneratedMedia, GeneratedVideo
 
 
 class Candidate(BaseModel):

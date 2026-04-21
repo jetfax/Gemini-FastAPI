@@ -1,18 +1,18 @@
 import re
 import time
 
-from curl_cffi.requests import AsyncSession, Cookies, Response
 import orjson as json
+from curl_cffi.requests import AsyncSession, Cookies, Response
 
+from ..constants import Endpoint, Headers
+from ..exceptions import AuthError
 from .load_browser_cookies import HAS_BC3, load_browser_cookies
 from .logger import logger
 from .rotate_1psidts import (
     _extract_cookie_value,
-    _get_cookies_cache_path,
     _get_cookie_cache_dir,
+    _get_cookies_cache_path,
 )
-from ..constants import Endpoint, Headers
-from ..exceptions import AuthError
 
 
 async def _send_request(

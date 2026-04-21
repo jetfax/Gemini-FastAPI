@@ -1,7 +1,8 @@
 import asyncio
 import time
+from collections.abc import Callable
 from textwrap import shorten
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Optional
 
 import orjson as json
 
