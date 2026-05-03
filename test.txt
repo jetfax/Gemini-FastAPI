@@ -1,5 +1,4 @@
 this is a test
 
 This is NEW!
-Refactored by Gemini.
-Version 3.10
+Version 3.0
